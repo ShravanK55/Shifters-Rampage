@@ -13,8 +13,8 @@ public:
 	~AnimatedGameSprite();
 
 	void PlayAnimation(const std::string& animation, bool once = false);
-	void Update(float elapsedTime);
-	void Draw(Graphics& graphics);
+	virtual void Update(float elapsedTime);
+	virtual void Draw(Graphics& graphics);
 
 protected:
 	double timeToUpdate;
@@ -27,8 +27,8 @@ protected:
 	void ResetAnimations();
 	void StopAnimation();
 
-	void SetupAnimations();
-	virtual void AnimationDone(const std::string& currentAnimation);
+	virtual void SetupAnimations() = 0;
+	virtual void AnimationDone(const std::string& currentAnimation) = 0;
 
 private:
 	std::map<std::string, std::vector<sf::IntRect> > animations;

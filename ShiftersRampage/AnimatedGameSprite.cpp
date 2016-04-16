@@ -22,9 +22,7 @@ AnimatedGameSprite::AnimatedGameSprite(Graphics& graphics, const std::string& fi
 	frameIndex(0),
 	timeElapsed(0.0f),
 	visible(true)
-{
-	SetupAnimations();
-}
+{}
 
 AnimatedGameSprite::~AnimatedGameSprite()
 {
@@ -108,14 +106,4 @@ void AnimatedGameSprite::StopAnimation()
 {
 	frameIndex = 0;
 	AnimationDone(currentAnimation);
-}
-
-void AnimatedGameSprite::SetupAnimations()
-{
-	AddAnimation("RunLeft", 3, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunRight", 3, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
-}
-
-void AnimatedGameSprite::AnimationDone(const std::string& currentAnimation)
-{
 }

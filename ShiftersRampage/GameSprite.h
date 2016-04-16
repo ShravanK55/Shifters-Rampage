@@ -9,7 +9,7 @@ public:
 	virtual ~GameSprite();
 
 	virtual void Update(float elapsedTime);
-	void Draw(Graphics& graphics);
+	virtual void Draw(Graphics& graphics);
 
 protected:
 	sf::Texture* spriteTexture;

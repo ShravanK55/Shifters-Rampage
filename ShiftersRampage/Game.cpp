@@ -8,8 +8,7 @@ Game::~Game() {}
 
 void Game::GameLoop()
 {
-	player = AnimatedGameSprite(graphics, "SpriteSheets/MyChar.png", 0, 0, 16, 16, 100, 100, 100.0f, 3.0f);
-	player.PlayAnimation("RunLeft");
+	player = Player(graphics, sf::Vector2f(50.0f, 50.0f));
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -46,6 +45,12 @@ void Game::GameLoop()
 
 		if (input.wasKeyPressed(sf::Keyboard::Escape))
 			return;
+		if (input.wasKeyPressed(sf::Keyboard::A))
+			player.MoveLeft();
+		else if (input.wasKeyPressed(sf::Keyboard::D))
+			player.MoveRight();
+		else if (!(input.isKeyHeld(sf::Keyboard::A)) && !(input.isKeyHeld(sf::Keyboard::D)))
+			player.StopMoving();
 
 		Update(elapsedTime);
 		Draw(graphics);
