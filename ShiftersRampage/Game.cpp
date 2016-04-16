@@ -1,13 +1,14 @@
 #include "Game.h"
 
 
+
 Game::Game() { GameLoop(); }
 Game::~Game() {}
 
 
 void Game::GameLoop()
 {
-	Graphics graphics;
+	player = GameSprite(graphics, "SpriteSheets/MyChar.png", 0, 0, 16, 16, 100, 100, 3.0f);
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -20,14 +21,30 @@ void Game::GameLoop()
 		elapsedTime = currentFrameTime - previousFrameTime;
 		previousFrameTime = currentFrameTime;
 
+		input.BeginNewFrame();
+
 		if (graphics.GetRenderWindow().pollEvent(windowEvent))
 		{
 			switch (windowEvent.type)
 			{
 			case sf::Event::Closed:
 				return;
+
+			case sf::Event::KeyPressed:
+				input.KeyDownEvent(windowEvent);
+				break;
+
+			case sf::Event::KeyReleased:
+				input.KeyUpEvent(windowEvent);
+				break;
+
+			default:
+				break;
 			}
 		}
+
+		if (input.wasKeyPressed(sf::Keyboard::Escape))
+			return;
 
 		Update(elapsedTime);
 		Draw(graphics);
@@ -41,5 +58,6 @@ void Game::Update(float elapsedTime)
 void Game::Draw(Graphics& graphics)
 {
 	graphics.ClearWindow();
+	player.Draw(graphics);
 	graphics.Render();
 }

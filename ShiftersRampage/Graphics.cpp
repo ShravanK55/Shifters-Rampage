@@ -10,12 +10,9 @@ Graphics::Graphics()
 
 Graphics::~Graphics()
 {
-	std::map<std::string, sf::Texture*>::iterator itr;
-
-	for (itr = textureCache.begin(); itr != textureCache.end(); itr++)
+	for (auto itr = textureCache.begin(); itr != textureCache.end(); itr++)
 	{
 		delete itr->second;
-		textureCache.erase(itr);
 	}
 
 	window.close();
