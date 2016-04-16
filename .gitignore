@@ -253,3 +253,6 @@ paket-files/
 
 # Additional Dependencies
 deps/
+ShiftersRampage/Maps/
+ShiftersRampage/Tilsets/
+ShiftersRampage/Spritesheets/

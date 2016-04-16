@@ -1,10 +1,8 @@
 #include "Game.h"
 
 
-
 Game::Game() { GameLoop(); }
 Game::~Game() {}
-
 
 void Game::GameLoop()
 {
@@ -45,9 +43,9 @@ void Game::GameLoop()
 
 		if (input.wasKeyPressed(sf::Keyboard::Escape))
 			return;
-		if (input.wasKeyPressed(sf::Keyboard::A))
+		if (input.isKeyHeld(sf::Keyboard::A))
 			player.MoveLeft();
-		else if (input.wasKeyPressed(sf::Keyboard::D))
+		else if (input.isKeyHeld(sf::Keyboard::D))
 			player.MoveRight();
 		else if (!(input.isKeyHeld(sf::Keyboard::A)) && !(input.isKeyHeld(sf::Keyboard::D)))
 			player.StopMoving();

@@ -23,16 +23,23 @@ sf::RenderWindow& Graphics::GetRenderWindow() { return window; }
 
 sf::Texture* Graphics::LoadImage(const std::string& filePath)
 {
-	sf::Texture* texture = new sf::Texture();
+	auto itr = textureCache.find(filePath);
 
-	if (!texture->loadFromFile(filePath))
+	if (itr == textureCache.end())
 	{
-		std::cout << "Could not load the texture!\n" << std::endl;
-		return nullptr;
+		sf::Texture* texture = new sf::Texture();
+
+		if (!texture->loadFromFile(filePath))
+		{
+			std::cout << "Could not load the texture!\n" << std::endl;
+			delete texture;
+			return nullptr;
+		}
+
+		textureCache.insert(std::pair<std::string, sf::Texture*>(filePath, texture));
 	}
 
-	textureCache.insert(std::pair<std::string, sf::Texture*> (filePath, texture));
-	return texture;
+	return textureCache[filePath];
 }
 
 void Graphics::ClearWindow()
