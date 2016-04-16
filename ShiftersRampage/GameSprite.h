@@ -16,7 +16,7 @@ protected:
 	sf::Sprite sprite;
 	sf::IntRect sourceRect;
 
-	int x, y;
+	sf::Vector2f position;
 
 private:
 

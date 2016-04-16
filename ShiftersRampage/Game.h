@@ -4,7 +4,7 @@
 
 #include "Globals.h"
 #include "Graphics.h"
-#include "GameSprite.h"
+#include "AnimatedGameSprite.h"
 #include "Input.h"
 
 class Game
@@ -17,7 +17,7 @@ private:
 	Graphics graphics;
 	Input input;
 
-	GameSprite player;
+	AnimatedGameSprite player;
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);

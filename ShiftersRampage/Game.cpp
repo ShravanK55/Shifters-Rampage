@@ -8,7 +8,8 @@ Game::~Game() {}
 
 void Game::GameLoop()
 {
-	player = GameSprite(graphics, "SpriteSheets/MyChar.png", 0, 0, 16, 16, 100, 100, 3.0f);
+	player = AnimatedGameSprite(graphics, "SpriteSheets/MyChar.png", 0, 0, 16, 16, 100, 100, 100.0f, 3.0f);
+	player.PlayAnimation("RunLeft");
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -53,6 +54,7 @@ void Game::GameLoop()
 
 void Game::Update(float elapsedTime)
 {
+	player.Update(elapsedTime);
 }
 
 void Game::Draw(Graphics& graphics)
