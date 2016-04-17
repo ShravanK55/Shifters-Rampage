@@ -10,7 +10,7 @@ namespace PlayerConstants
 Player::Player() {}
 
 Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
-	AnimatedGameSprite(graphics, "Spritesheets/Hero.png", 0, 0, 32, 32, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
+	AnimatedGameSprite(graphics, "Spritesheets/Hero.png", 0, 0, 48, 32, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
 	dx(0.0f), dy(0.0f),
 	grounded(false),
 	state(IDLE)
@@ -81,6 +81,13 @@ void Player::Jump()
 	grounded = false;
 }
 
+void Player::Attack()
+{
+	dx = 0;
+	state = ATTACKING;
+	PlayAnimation(facing == RIGHT ? "AttackRight" : "AttackLeft");
+}
+
 void Player::TransformRed()
 {
 	sprite.setColor(sf::Color(255, 0, 0));
@@ -103,14 +110,21 @@ void Player::SetupAnimations()
 	//AddAnimation("RunLeft", 3, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
 	//AddAnimation("RunRight", 3, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
 
-	AddAnimation("IdleLeft", 4, 0, 96, 32, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("IdleRight", 4, 0, 0, 32, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunLeft", 6, 0, 64, 32, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunRight", 6, 0, 32, 32, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("IdleLeft", 4, 0, 96, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("IdleRight", 4, 0, 0, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RunLeft", 6, 0, 64, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RunRight", 6, 0, 32, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("AttackRight", 4, 0, 128, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("AttackLeft", 4, 0, 160, 48, 32, sf::Vector2f(0.0f, 0.0f));
 }
 
 void Player::AnimationDone(const std::string& currentAnimation)
 {
+	if (currentAnimation == "AttackRight" || currentAnimation == "AttackLeft")
+	{
+		PlayAnimation(facing == RIGHT ? "IdleRight" : "IdleLeft");
+		state = IDLE;
+	}
 }
 
 void Player::HandleTileCollision(std::vector<sf::IntRect>& others)

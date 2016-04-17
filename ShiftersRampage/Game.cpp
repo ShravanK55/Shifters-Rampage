@@ -6,7 +6,7 @@ Game::~Game() {}
 
 void Game::GameLoop()
 {
-	level = Level("Map1Game", sf::Vector2i(100, 100), graphics);
+	level = Level("Map2Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
 	sf::Event windowEvent;
 	sf::Clock clock;
@@ -44,15 +44,20 @@ void Game::GameLoop()
 
 		if (input.wasKeyPressed(sf::Keyboard::Escape))
 			return;
-		if (input.isKeyHeld(sf::Keyboard::A))
+		if (input.isKeyHeld(sf::Keyboard::A) && player.GetPlayerState() != ATTACKING)
 			player.MoveLeft();
-		else if (input.isKeyHeld(sf::Keyboard::D))
+		else if (input.isKeyHeld(sf::Keyboard::D) && player.GetPlayerState() != ATTACKING)
 			player.MoveRight();
-		else if (!input.isKeyHeld(sf::Keyboard::A) && !input.isKeyHeld(sf::Keyboard::D) && player.IsGrounded())
+		else if (!input.isKeyHeld(sf::Keyboard::A) && !input.isKeyHeld(sf::Keyboard::D) && player.IsGrounded() && player.GetPlayerState() != ATTACKING)
 			player.StopMoving();
 
 		if (input.wasKeyPressed(sf::Keyboard::Space) && player.IsGrounded())
 			player.Jump();
+
+		if (input.wasKeyPressed(sf::Keyboard::T) && player.IsGrounded())
+		{
+			player.Attack();
+		}
 
 		if (input.wasKeyPressed(sf::Keyboard::Z))
 			player.TransformRed();

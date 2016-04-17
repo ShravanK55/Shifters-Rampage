@@ -12,7 +12,8 @@ enum PlayerState
 	IDLE,
 	RUNNING,
 	JUMPING_UP,
-	FALLING
+	FALLING,
+	ATTACKING
 };
 
 class Player : public AnimatedGameSprite
@@ -34,6 +35,8 @@ public:
 	void StopMoving();
 
 	void Jump();
+
+	void Attack();
 
 	void TransformRed();
 	void TransformBlue();

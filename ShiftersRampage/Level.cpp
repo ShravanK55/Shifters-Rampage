@@ -205,7 +205,7 @@ void Level::LoadMap(const std::string& mapName, Graphics& graphics)
 						std::stringstream ss;
 						ss << name;
 
-						if (ss.str() == "Spawn Point")
+						if (ss.str() == "SpawnPoint")
 						{
 							spawnPoint = sf::Vector2i(x, y);
 						}
