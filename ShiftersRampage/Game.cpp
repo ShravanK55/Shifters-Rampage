@@ -6,7 +6,8 @@ Game::~Game() {}
 
 void Game::GameLoop()
 {
-	player = Player(graphics, sf::Vector2f(50.0f, 50.0f));
+	level = Level("Map1Game", sf::Vector2i(100, 100), graphics);
+	player = Player(graphics, level.GetSpawnPoint());
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -47,8 +48,11 @@ void Game::GameLoop()
 			player.MoveLeft();
 		else if (input.isKeyHeld(sf::Keyboard::D))
 			player.MoveRight();
-		else if (!(input.isKeyHeld(sf::Keyboard::A)) && !(input.isKeyHeld(sf::Keyboard::D)))
+		else if (!input.isKeyHeld(sf::Keyboard::A) && !input.isKeyHeld(sf::Keyboard::D) && player.IsGrounded())
 			player.StopMoving();
+
+		if (input.wasKeyPressed(sf::Keyboard::Space) && player.IsGrounded())
+			player.Jump();
 
 		Update(elapsedTime);
 		Draw(graphics);
@@ -58,11 +62,20 @@ void Game::GameLoop()
 void Game::Update(float elapsedTime)
 {
 	player.Update(elapsedTime);
+	level.Update(elapsedTime);
+
+	std::vector<sf::IntRect> others;
+	others = level.CheckTileCollisions(player.GetBoundingBox());
+
+	if (others.size() > 0)
+		player.HandleTileCollision(others);
+
 }
 
 void Game::Draw(Graphics& graphics)
 {
 	graphics.ClearWindow();
+	level.Draw(graphics);
 	player.Draw(graphics);
 	graphics.Render();
 }

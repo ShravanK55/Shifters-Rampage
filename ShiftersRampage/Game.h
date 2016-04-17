@@ -6,6 +6,7 @@
 #include "Graphics.h"
 #include "Player.h"
 #include "Input.h"
+#include "Level.h"
 
 class Game
 {
@@ -18,6 +19,7 @@ private:
 	Input input;
 
 	Player player;
+	Level level;
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);

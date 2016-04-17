@@ -1,12 +1,19 @@
 #include "Player.h"
 
+namespace PlayerConstants
+{
+	const float WALK_SPEED = 0.2f;
+	const float GRAVITY = 0.02f;
+	const float GRAVITY_CAP = 0.5f;
+}
 
 Player::Player() {}
 
-Player::Player(Graphics& graphics, sf::Vector2f spawnPoint) :
+Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
 	AnimatedGameSprite(graphics, "Spritesheets/MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
 	dx(0.0f), dy(0.0f),
-	walkSpeed(0.2f)
+	grounded(false),
+	state(IDLE)
 {
 	SetupAnimations();
 	PlayAnimation("IdleRight");
@@ -14,12 +21,24 @@ Player::Player(Graphics& graphics, sf::Vector2f spawnPoint) :
 }
 
 Player::~Player()
-{
-}
+{}
+
+bool Player::IsGrounded() const { return grounded; }
+PlayerState Player::GetPlayerState() const { return state; }
+void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
 
 void Player::Update(float elapsedTime)
 {
+	if (dy <= PlayerConstants::GRAVITY_CAP)
+	{
+		dy += PlayerConstants::GRAVITY;
+
+		if (dy > 0)
+			state = FALLING;
+	}
+
 	position.x += dx * elapsedTime;
+	position.y += dy * elapsedTime;
 	sprite.setPosition(position);
 	AnimatedGameSprite::Update(elapsedTime);
 }
@@ -31,22 +50,32 @@ void Player::Draw(Graphics& graphics)
 
 void Player::MoveLeft()
 {
-	dx = -walkSpeed;
+	dx = -PlayerConstants::WALK_SPEED;
 	PlayAnimation("RunLeft");
 	facing = LEFT;
+	state = RUNNING;
 }
 
 void Player::MoveRight()
 {
-	dx = walkSpeed;
+	dx = PlayerConstants::WALK_SPEED;
 	PlayAnimation("RunRight");
 	facing = RIGHT;
+	state = RUNNING;
 }
 
 void Player::StopMoving()
 {
 	dx = 0;
 	PlayAnimation(facing == RIGHT ? "IdleRight" : "IdleLeft");
+	state = IDLE;
+}
+
+void Player::Jump()
+{
+	dy = -0.4f;
+	state = JUMPING_UP;
+	grounded = false;
 }
 
 void Player::SetupAnimations()
@@ -59,4 +88,37 @@ void Player::SetupAnimations()
 
 void Player::AnimationDone(const std::string& currentAnimation)
 {
+}
+
+void Player::HandleTileCollision(std::vector<sf::IntRect>& others)
+{
+	for (int i = 0; i < others.size(); i++)
+	{
+		Side::Side collisionSide = GetCollisionSide(others[i]);
+
+		if (collisionSide != Side::NONE)
+		{
+			switch (collisionSide)
+			{
+			case Side::TOP:
+				position.y = others[i].top + others[i].height + 1;
+				dy = 0;
+				break;
+
+			case Side::BOTTOM:
+				position.y = others[i].top - boundingBox.height - 1;
+				dy = 0;
+				grounded = true;
+				break;
+
+			case Side::LEFT:
+				position.x = others[i].left + others[i].width + 1;
+				break;
+
+			case Side::RIGHT:
+				position.x = others[i].left - boundingBox.width - 1;
+				break;
+			}
+		}
+	}
 }

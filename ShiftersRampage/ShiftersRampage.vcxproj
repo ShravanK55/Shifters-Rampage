@@ -126,6 +126,7 @@
     <ClCompile Include="GameSprite.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="tinyxml2.h" />
