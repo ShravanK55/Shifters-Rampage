@@ -9,13 +9,7 @@
 #include "Level.h"
 #include "MainMenu.h"
 #include "PauseMenu.h"
-
-enum GameState
-{
-	MAIN_MENU,
-	PAUSE_MENU,
-	PLAYING
-};
+#include "Enemy.h"
 
 class Game
 {
@@ -31,9 +25,11 @@ private:
 	PauseMenu pauseMenu;
 
 	Player player;
+	Enemy enemy;
 	Level level;
 
-	GameState gameState;
+	int enemiesKilled;
+	int score;
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);

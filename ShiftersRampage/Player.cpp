@@ -2,9 +2,11 @@
 
 namespace PlayerConstants
 {
-	const float WALK_SPEED = 0.2f;
-	const float GRAVITY = 0.02f;
+	const float JUMP_HEIGHT = -0.6f;
+	const float WALK_SPEED = 0.4f;
+	const float GRAVITY = 0.03f;
 	const float GRAVITY_CAP = 0.5f;
+	const float AIR_DRAG = 1.2f;
 }
 
 Player::Player() {}
@@ -37,6 +39,9 @@ void Player::Update(float elapsedTime)
 
 			if (dy > 0)
 				state = FALLING;
+
+			if (dx != 0)
+				dx = dx / PlayerConstants::AIR_DRAG;
 		}
 	}
 
@@ -76,14 +81,14 @@ void Player::StopMoving()
 
 void Player::Jump()
 {
-	dy = -0.4f;
+	dy = PlayerConstants::JUMP_HEIGHT;
 	state = JUMPING_UP;
 	grounded = false;
 }
 
 void Player::Attack()
 {
-	dx = 0;
+	dx /= 2.0f;
 	state = ATTACKING;
 	PlayAnimation(facing == RIGHT ? "AttackRight" : "AttackLeft");
 }
@@ -103,19 +108,41 @@ void Player::Revert()
 	sprite.setColor(sf::Color(255, 255, 255));
 }
 
+const int Player::GetHealth() const { return (int)hp; }
+
+void Player::DepleteHealth(float amount)
+{
+	hp -= amount;
+	if (hp < 0.0f)
+		hp = 0.0f;
+}
+
 void Player::SetupAnimations()
 {
-	//AddAnimation("IdleLeft", 1, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	//AddAnimation("IdleRight", 1, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	//AddAnimation("RunLeft", 3, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	//AddAnimation("RunRight", 3, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
-
 	AddAnimation("IdleLeft", 4, 0, 96, 48, 32, sf::Vector2f(0.0f, 0.0f));
 	AddAnimation("IdleRight", 4, 0, 0, 48, 32, sf::Vector2f(0.0f, 0.0f));
 	AddAnimation("RunLeft", 6, 0, 64, 48, 32, sf::Vector2f(0.0f, 0.0f));
 	AddAnimation("RunRight", 6, 0, 32, 48, 32, sf::Vector2f(0.0f, 0.0f));
 	AddAnimation("AttackRight", 4, 0, 128, 48, 32, sf::Vector2f(0.0f, 0.0f));
 	AddAnimation("AttackLeft", 4, 0, 160, 48, 32, sf::Vector2f(0.0f, 0.0f));
+}
+
+void Player::SetupHitboxes()
+{
+	std::vector<sf::IntRect> hitBoxRight;
+	hitBoxRight.push_back(sf::IntRect());
+	hitBoxRight.push_back(sf::IntRect());
+	hitBoxRight.push_back(sf::IntRect(17, 10, 30, 22));
+	hitBoxRight.push_back(sf::IntRect());
+
+	std::vector<sf::IntRect> hitBoxLeft;
+	hitBoxLeft.push_back(sf::IntRect());
+	hitBoxLeft.push_back(sf::IntRect());
+	hitBoxLeft.push_back(sf::IntRect(0, 10, 30, 22));
+	hitBoxLeft.push_back(sf::IntRect());
+
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackRight", hitBoxRight));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackLeft", hitBoxLeft));
 }
 
 void Player::AnimationDone(const std::string& currentAnimation)

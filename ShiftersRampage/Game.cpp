@@ -3,7 +3,6 @@
 
 Game::Game()
 {
-	gameState = MAIN_MENU;
 	MainMenuAction result = mainMenu.DisplayMenu(graphics);
 	
 	switch (result)
@@ -25,6 +24,7 @@ void Game::GameLoop()
 {
 	level = Level("Map3Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
+	enemy = Enemy(graphics, sf::Vector2i(300, 500));
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -106,13 +106,22 @@ void Game::GameLoop()
 void Game::Update(float elapsedTime)
 {
 	player.Update(elapsedTime);
+	enemy.Move(player);
+	enemy.Update(elapsedTime);
 	level.Update(elapsedTime);
 
 	std::vector<sf::IntRect> others;
+	std::vector<sf::IntRect> enemyOthers;;
 	others = level.CheckTileCollisions(player.GetBoundingBox());
+	enemyOthers = level.CheckTileCollisions(enemy.GetBoundingBox());
 
 	if (others.size() > 0)
 		player.HandleTileCollision(others);
+	if (enemyOthers.size() > 0)
+		enemy.HandleTileCollision(enemyOthers);
+
+	enemy.CheckPlayerCollision(player);
+	std::cout << "Player health: " << player.GetHealth() << std::endl;
 }
 
 void Game::Draw(Graphics& graphics)
@@ -120,5 +129,6 @@ void Game::Draw(Graphics& graphics)
 	graphics.ClearWindow();
 	level.Draw(graphics);
 	player.Draw(graphics);
+	enemy.Draw(graphics);
 	graphics.Render();
 }
