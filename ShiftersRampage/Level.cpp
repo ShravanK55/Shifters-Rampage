@@ -142,7 +142,7 @@ void Level::LoadMap(const std::string& mapName, Graphics& graphics)
 							int tilesetWidth = tls.texture->getSize().x;
 							int tilesetHeight = tls.texture->getSize().y;
 
-							int tsxx = (gid % (tilesetWidth / tileWidth)) - 1;
+							int tsxx = gid % (tilesetWidth / tileWidth) - 1;
 							tsxx *= tileWidth;
 							int amount = gid / (tilesetWidth / tileWidth);
 							int tsyy = tileHeight * amount;

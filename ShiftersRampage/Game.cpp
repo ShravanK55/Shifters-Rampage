@@ -1,12 +1,29 @@
 #include "Game.h"
 
 
-Game::Game() { GameLoop(); }
+Game::Game()
+{
+	gameState = MAIN_MENU;
+	MainMenuAction result = mainMenu.DisplayMenu(graphics);
+	
+	switch (result)
+	{
+	case MainMenuAction::PLAY:
+		GameLoop();
+		break;
+
+	case MainMenuAction::EXIT:
+		return;
+
+	case MainMenuAction::NONE:
+		break;
+	}
+}
 Game::~Game() {}
 
 void Game::GameLoop()
 {
-	level = Level("Map2Game", sf::Vector2i(100, 100), graphics);
+	level = Level("Map3Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
 	sf::Event windowEvent;
 	sf::Clock clock;
@@ -43,7 +60,22 @@ void Game::GameLoop()
 		}
 
 		if (input.wasKeyPressed(sf::Keyboard::Escape))
-			return;
+		{
+			PauseMenuAction result = pauseMenu.DisplayMenu(graphics);
+
+			switch (result)
+			{
+			case PauseMenuAction::RESUME:
+				break;
+
+			case PauseMenuAction::QUIT:
+				return;
+
+			case PauseMenuAction::NONE:
+				break;
+			}
+		}
+
 		if (input.isKeyHeld(sf::Keyboard::A) && player.GetPlayerState() != ATTACKING)
 			player.MoveLeft();
 		else if (input.isKeyHeld(sf::Keyboard::D) && player.GetPlayerState() != ATTACKING)

@@ -32,7 +32,7 @@ const sf::IntRect GameSprite::GetBoundingBox() const { return boundingBox; }
 
 void GameSprite::Update(float elapsedTime)
 {
-	boundingBox = sf::IntRect(position.x, position.y, sourceRect.width * scale, sourceRect.height * scale);
+	boundingBox = sf::IntRect(position.x, position.y, (sourceRect.width) * scale, (sourceRect.height) * scale);
 }
 
 void GameSprite::Draw(Graphics& graphics)
