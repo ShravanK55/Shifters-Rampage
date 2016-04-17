@@ -35,6 +35,10 @@ public:
 
 	void Jump();
 
+	void TransformRed();
+	void TransformBlue();
+	void Revert();
+
 	void SetupAnimations();
 	void AnimationDone(const std::string& currentAnimation);
 

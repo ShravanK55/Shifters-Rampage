@@ -10,7 +10,7 @@ namespace PlayerConstants
 Player::Player() {}
 
 Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
-	AnimatedGameSprite(graphics, "Spritesheets/MyChar.png", 0, 0, 16, 16, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
+	AnimatedGameSprite(graphics, "Spritesheets/Hero.png", 0, 0, 32, 32, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
 	dx(0.0f), dy(0.0f),
 	grounded(false),
 	state(IDLE)
@@ -29,12 +29,15 @@ void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
 
 void Player::Update(float elapsedTime)
 {
-	if (dy <= PlayerConstants::GRAVITY_CAP)
+	if (!grounded)
 	{
-		dy += PlayerConstants::GRAVITY;
+		if (dy <= PlayerConstants::GRAVITY_CAP)
+		{
+			dy += PlayerConstants::GRAVITY;
 
-		if (dy > 0)
-			state = FALLING;
+			if (dy > 0)
+				state = FALLING;
+		}
 	}
 
 	position.x += dx * elapsedTime;
@@ -78,12 +81,32 @@ void Player::Jump()
 	grounded = false;
 }
 
+void Player::TransformRed()
+{
+	sprite.setColor(sf::Color(255, 0, 0));
+}
+
+void Player::TransformBlue()
+{
+	sprite.setColor(sf::Color(0, 0, 255));
+}
+
+void Player::Revert()
+{
+	sprite.setColor(sf::Color(255, 255, 255));
+}
+
 void Player::SetupAnimations()
 {
-	AddAnimation("IdleLeft", 1, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("IdleRight", 1, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunLeft", 3, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunRight", 3, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
+	//AddAnimation("IdleLeft", 1, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
+	//AddAnimation("IdleRight", 1, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
+	//AddAnimation("RunLeft", 3, 0, 0, 16, 16, sf::Vector2f(0.0f, 0.0f));
+	//AddAnimation("RunRight", 3, 0, 16, 16, 16, sf::Vector2f(0.0f, 0.0f));
+
+	AddAnimation("IdleLeft", 4, 0, 96, 32, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("IdleRight", 4, 0, 0, 32, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RunLeft", 6, 0, 64, 32, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RunRight", 6, 0, 32, 32, 32, sf::Vector2f(0.0f, 0.0f));
 }
 
 void Player::AnimationDone(const std::string& currentAnimation)

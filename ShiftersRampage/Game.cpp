@@ -54,6 +54,13 @@ void Game::GameLoop()
 		if (input.wasKeyPressed(sf::Keyboard::Space) && player.IsGrounded())
 			player.Jump();
 
+		if (input.wasKeyPressed(sf::Keyboard::Z))
+			player.TransformRed();
+		if (input.wasKeyPressed(sf::Keyboard::X))
+			player.TransformBlue();
+		if (input.wasKeyPressed(sf::Keyboard::C))
+			player.Revert();
+
 		Update(elapsedTime);
 		Draw(graphics);
 	}
@@ -69,7 +76,6 @@ void Game::Update(float elapsedTime)
 
 	if (others.size() > 0)
 		player.HandleTileCollision(others);
-
 }
 
 void Game::Draw(Graphics& graphics)
