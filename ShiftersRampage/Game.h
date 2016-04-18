@@ -39,6 +39,8 @@ private:
 	int enemiesKilled;
 	int score;
 
+	bool pauseQuit;
+
 	void Reset();
 
 	void Update(float elapsedTime);

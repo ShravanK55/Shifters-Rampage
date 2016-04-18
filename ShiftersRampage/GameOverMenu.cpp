@@ -65,12 +65,12 @@ GameOverMenuAction GameOverMenu::DisplayMenu(Graphics& graphics)
 
 		score.setString(pScore.str());
 		score.setFont(menuFont);
-		score.setCharacterSize(25);
-		score.setPosition(Globals::SCREEN_WIDTH / 2 - score.getLocalBounds().width / 2, 205);
+		score.setCharacterSize(40);
+		score.setPosition(Globals::SCREEN_WIDTH / 2 - score.getLocalBounds().width / 2, 195);
 		enemiesKilled.setString(pKilled.str());
 		enemiesKilled.setFont(menuFont);
-		enemiesKilled.setCharacterSize(25);
-		enemiesKilled.setPosition(Globals::SCREEN_WIDTH / 2 - enemiesKilled.getLocalBounds().width / 2, 615);
+		enemiesKilled.setCharacterSize(40);
+		enemiesKilled.setPosition(Globals::SCREEN_WIDTH / 2 - enemiesKilled.getLocalBounds().width / 2, 605);
 
 		graphics.ClearWindow();
 		graphics.BlitSurface(menuSprite, menuSprite.getTextureRect());

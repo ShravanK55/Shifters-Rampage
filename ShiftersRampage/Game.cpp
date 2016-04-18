@@ -7,6 +7,7 @@ Game::Game()
 	
 	score = 0;
 	enemiesKilled = 0;
+	pauseQuit = false;
 
 	switch (result)
 	{
@@ -23,6 +24,9 @@ Game::Game()
 
 	while (true)
 	{
+		if (pauseQuit)
+			return;
+
 		gameOverMenu = GameOverMenu(score, enemiesKilled);
 		GameOverMenuAction gResult = gameOverMenu.DisplayMenu(graphics);
 
@@ -56,6 +60,7 @@ void Game::Reset()
 	score = 0;
 	enemiesKilled = 0;
 	player.ResetHP();
+	pauseQuit = false;
 }
 
 void Game::GameLoop()
@@ -124,6 +129,7 @@ void Game::GameLoop()
 				break;
 
 			case PauseMenuAction::QUIT:
+				pauseQuit = true;
 				return;
 
 			case PauseMenuAction::NONE:
