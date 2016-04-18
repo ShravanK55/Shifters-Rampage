@@ -3,10 +3,10 @@
 #include "AnimatedGameSprite.h"
 
 
-enum EnemyType
+enum class EnemyType
 {
-	GREEN,
 	RED,
+	GREEN,
 	BLUE
 };
 
@@ -25,6 +25,8 @@ public:
 	int GetHealth() const;
 	void SetDamaged(bool damaged);
 	bool IsDamaged() const;
+	void SetColor(sf::Color& color);
+	EnemyType GetEnemyType() const;
 
 	void Move(const sf::IntRect& playerBox);
 	void StopMoving();

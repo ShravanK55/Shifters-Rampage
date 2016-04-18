@@ -15,7 +15,7 @@ Enemy::Enemy(Graphics& graphics, sf::Vector2i spawnPoint) :
 	AnimatedGameSprite(graphics, "Spritesheets/ProtoEnemy.png", 0, 0, 48, 32, spawnPoint.x, spawnPoint.y, 100.0f, 1.0f),
 	dx(0), dy(0),
 	facing(RIGHT),
-	type(RED),
+	type(EnemyType::GREEN),
 	playerDamaged(false),
 	isDamaged(false),
 	hp(100.0f),
@@ -24,15 +24,15 @@ Enemy::Enemy(Graphics& graphics, sf::Vector2i spawnPoint) :
 	SetupAnimations();
 	switch (type)
 	{
-	case GREEN:
+	case EnemyType::GREEN:
 		PlayAnimation("GreenFlyRight");
 		break;
 
-	case RED:
+	case EnemyType::RED:
 		PlayAnimation("RedFlyRight");
 		break;
 
-	case BLUE:
+	case EnemyType::BLUE:
 		PlayAnimation("BlueFlyRight");
 		break;
 	}
@@ -59,6 +59,8 @@ bool Enemy::IsDead() const { return isDead; }
 int Enemy::GetHealth() const { return (int)hp; }
 void Enemy::SetDamaged(bool damaged) { this->isDamaged = damaged; }
 bool Enemy::IsDamaged() const {	return isDamaged; }
+void Enemy::SetColor(sf::Color& color) { sprite.setColor(color); }
+EnemyType Enemy::GetEnemyType() const { return type; }
 
 void Enemy::Move(const sf::IntRect& playerBox)
 {
@@ -86,15 +88,15 @@ void Enemy::Move(const sf::IntRect& playerBox)
 
 	switch (type)
 	{
-	case GREEN:
+	case EnemyType::GREEN:
 		PlayAnimation(dx > 0 ? "GreenFlyRight" : "GreenFlyLeft");
 		break;
 
-	case RED:
+	case EnemyType::RED:
 		PlayAnimation(dx > 0 ? "RedFlyRight" : "RedFlyLeft");
 		break;
 
-	case BLUE:
+	case EnemyType::BLUE:
 		PlayAnimation(dx > 0 ? "BlueFlyRight" : "BlueFlyLeft");
 		break;
 	}

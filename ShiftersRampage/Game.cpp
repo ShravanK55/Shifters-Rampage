@@ -104,9 +104,9 @@ void Game::GameLoop()
 		if (input.wasKeyPressed(sf::Keyboard::Z))
 			player.TransformRed();
 		if (input.wasKeyPressed(sf::Keyboard::X))
-			player.TransformBlue();
+			player.TransformGreen();
 		if (input.wasKeyPressed(sf::Keyboard::C))
-			player.Revert();
+			player.TransformBlue();
 
 		Update(elapsedTime);
 		Draw(graphics);
@@ -157,12 +157,16 @@ void Game::Update(float elapsedTime)
 				{
 					enemies[i]->DepleteHealth(player.GetDamageAmount());
 					enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
+					enemies[i]->SetColor(sf::Color(255, 0, 0));
 					enemies[i]->SetDamaged(true);
 					std::cout << "Enemy health: " << enemies[i]->GetHealth() << std::endl;
 				}
 			}
 			else
+			{
 				enemies[i]->SetDamaged(false);
+				enemies[i]->SetColor(sf::Color(255, 255, 255));
+			}
 
 			if (enemies[i]->IsDead())
 			{

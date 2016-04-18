@@ -11,6 +11,13 @@ enum PlayerState
 	ATTACKING
 };
 
+enum class SwordForm
+{
+	RED,
+	GREEN,
+	BLUE
+};
+
 class Player : public AnimatedGameSprite
 {
 public:
@@ -24,6 +31,7 @@ public:
 	const float GetDamageAmount() const;
 	void SetGrounded(bool grounded);
 	const float GetKnockbackAmount() const;
+	SwordForm GetSwordForm() const;
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);
@@ -37,8 +45,8 @@ public:
 	void Attack();
 
 	void TransformRed();
+	void TransformGreen();
 	void TransformBlue();
-	void Revert();
 
 	const int GetHealth() const;
 	void DepleteHealth(float amount);
@@ -58,6 +66,7 @@ private:
 	PlayerState state;
 	float hp = 100.0f;
 	sf::IntRect currentHitbox;
+	SwordForm form;
 
 	std::map<std::string, std::vector<sf::IntRect> > hitBoxes;
 };

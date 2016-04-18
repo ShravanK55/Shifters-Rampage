@@ -18,12 +18,29 @@ Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
 	dx(0.0f), dy(0.0f),
 	grounded(false),
 	state(IDLE),
-	currentHitbox(sf::IntRect())
+	currentHitbox(sf::IntRect()),
+	form(SwordForm::BLUE)
 {
 	SetupAnimations();
 	SetupHitboxes();
-	PlayAnimation("IdleRight");
-	facing = RIGHT;
+
+	switch (form)
+	{
+	case SwordForm::RED:
+		PlayAnimation("RedIdleRight");
+		facing = RIGHT;
+		break;
+
+	case SwordForm::GREEN:
+		PlayAnimation("GreenIdleRight");
+		facing = RIGHT;
+		break;
+
+	case SwordForm::BLUE:
+		PlayAnimation("BlueIdleRight");
+		facing = RIGHT;
+		break;
+	}
 }
 
 Player::~Player()
@@ -35,6 +52,7 @@ PlayerState Player::GetPlayerState() const { return state; }
 const float Player::GetDamageAmount() const { return PlayerConstants::ATTACK_DAMAGE; }
 void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
 const float Player::GetKnockbackAmount() const { return PlayerConstants::KNOCKBACK_AMOUNT; }
+SwordForm Player::GetSwordForm() const { return form; }
 
 void Player::Update(float elapsedTime)
 {
@@ -70,7 +88,22 @@ void Player::Draw(Graphics& graphics)
 void Player::MoveLeft()
 {
 	dx = -PlayerConstants::WALK_SPEED;
-	PlayAnimation("RunLeft");
+
+	switch (form)
+	{
+	case SwordForm::RED:
+		PlayAnimation("RedRunLeft");
+		break;
+
+	case SwordForm::GREEN:
+		PlayAnimation("GreenRunLeft");
+		break;
+
+	case SwordForm::BLUE:
+		PlayAnimation("BlueRunLeft");
+		break;
+	}
+	
 	facing = LEFT;
 	state = RUNNING;
 }
@@ -78,7 +111,23 @@ void Player::MoveLeft()
 void Player::MoveRight()
 {
 	dx = PlayerConstants::WALK_SPEED;
-	PlayAnimation("RunRight");
+
+	switch (form)
+	{
+	case SwordForm::RED:
+		PlayAnimation("RedRunRight");
+		break;
+
+	case SwordForm::GREEN:
+		PlayAnimation("GreenRunRight");
+		break;
+
+	case SwordForm::BLUE:
+		PlayAnimation("BlueRunRight");
+		break;
+	}
+
+	
 	facing = RIGHT;
 	state = RUNNING;
 }
@@ -86,7 +135,20 @@ void Player::MoveRight()
 void Player::StopMoving()
 {
 	dx = 0;
-	PlayAnimation(facing == RIGHT ? "IdleRight" : "IdleLeft");
+	switch (form)
+	{
+	case SwordForm::RED:
+		PlayAnimation(facing == RIGHT ? "RedIdleRight" : "RedIdleLeft");
+		break;
+
+	case SwordForm::GREEN:
+		PlayAnimation(facing == RIGHT ? "GreenIdleRight" : "GreenIdleLeft");
+		break;
+
+	case SwordForm::BLUE:
+		PlayAnimation(facing == RIGHT ? "BlueIdleRight" : "BlueIdleLeft");
+		break;
+	}
 	state = IDLE;
 }
 
@@ -101,22 +163,50 @@ void Player::Attack()
 {
 	dx /= 2.0f;
 	state = ATTACKING;
-	PlayAnimation(facing == RIGHT ? "AttackRight" : "AttackLeft");
+	switch (form)
+	{
+	case SwordForm::RED:
+		PlayAnimation(facing == RIGHT ? "RedAttackRight" : "RedAttackLeft");
+		break;
+
+	case SwordForm::GREEN:
+		PlayAnimation(facing == RIGHT ? "GreenAttackRight" : "GreenAttackLeft");
+		break;
+
+	case SwordForm::BLUE:
+		PlayAnimation(facing == RIGHT ? "BlueAttackRight" : "BlueAttackLeft");
+		break;
+	}
 }
 
 void Player::TransformRed()
 {
-	sprite.setColor(sf::Color(255, 0, 0));
+	if (form != SwordForm::RED)
+	{
+		form = SwordForm::RED;
+		state = IDLE;
+		PlayAnimation(facing == RIGHT ? "RedIdleRight" : "RedIdleLeft");
+	}
+}
+
+void Player::TransformGreen()
+{
+	if (form != SwordForm::GREEN)
+	{
+		form = SwordForm::GREEN;
+		state = IDLE;
+		PlayAnimation(facing == RIGHT ? "GreenIdleRight" : "GreenIdleLeft");
+	}
 }
 
 void Player::TransformBlue()
 {
-	sprite.setColor(sf::Color(0, 0, 255));
-}
-
-void Player::Revert()
-{
-	sprite.setColor(sf::Color(255, 255, 255));
+	if (form != SwordForm::BLUE)
+	{
+		form = SwordForm::BLUE;
+		state = IDLE;
+		PlayAnimation(facing == RIGHT ? "BlueIdleRight" : "BlueIdleLeft");
+	}
 }
 
 const int Player::GetHealth() const { return (int)hp; }
@@ -138,12 +228,26 @@ bool Player::CheckAttackHit(const sf::IntRect& enemyBox)
 
 void Player::SetupAnimations()
 {
-	AddAnimation("IdleLeft", 4, 0, 96, 48, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("IdleRight", 4, 0, 0, 48, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunLeft", 6, 0, 64, 48, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("RunRight", 6, 0, 32, 48, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("AttackRight", 4, 0, 128, 48, 32, sf::Vector2f(0.0f, 0.0f));
-	AddAnimation("AttackLeft", 4, 0, 160, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueIdleRight", 4, 0, 0, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueRunRight", 6, 0, 32, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueRunLeft", 6, 0, 64, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueIdleLeft", 4, 0, 96, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueAttackRight", 4, 0, 128, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("BlueAttackLeft", 4, 0, 160, 48, 32, sf::Vector2f(0.0f, 0.0f));
+
+	AddAnimation("RedIdleRight", 4, 0, 192, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RedRunRight", 6, 0, 224, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RedRunLeft", 6, 0, 256, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RedIdleLeft", 4, 0, 288, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RedAttackRight", 4, 0, 320, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("RedAttackLeft", 4, 0, 352, 48, 32, sf::Vector2f(0.0f, 0.0f));
+
+	AddAnimation("GreenIdleRight", 4, 0, 384, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("GreenRunRight", 6, 0, 416, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("GreenRunLeft", 6, 0, 448, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("GreenIdleLeft", 4, 0, 480, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("GreenAttackRight", 4, 0, 512, 48, 32, sf::Vector2f(0.0f, 0.0f));
+	AddAnimation("GreenAttackLeft", 4, 0, 544, 48, 32, sf::Vector2f(0.0f, 0.0f));
 }
 
 void Player::SetupHitboxes()
@@ -160,15 +264,29 @@ void Player::SetupHitboxes()
 	hitBoxLeft.push_back(sf::IntRect(0, 10, 30, 22));
 	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
 
-	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackRight", hitBoxRight));
-	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackLeft", hitBoxLeft));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("BlueAttackRight", hitBoxRight));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("BlueAttackLeft", hitBoxLeft));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("RedAttackRight", hitBoxRight));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("RedAttackLeft", hitBoxLeft));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("GreenAttackRight", hitBoxRight));
+	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("GreenAttackLeft", hitBoxLeft));
 }
 
 void Player::AnimationDone(const std::string& currentAnimation)
 {
-	if (currentAnimation == "AttackRight" || currentAnimation == "AttackLeft")
+	if (currentAnimation == "BlueAttackRight" || currentAnimation == "BlueAttackLeft")
 	{
-		PlayAnimation(facing == RIGHT ? "IdleRight" : "IdleLeft");
+		PlayAnimation(facing == RIGHT ? "BlueIdleRight" : "BlueIdleLeft");
+		state = IDLE;
+	}
+	else if (currentAnimation == "GreenAttackRight" || currentAnimation == "GreenAttackLeft")
+	{
+		PlayAnimation(facing == RIGHT ? "GreenIdleRight" : "GreenIdleLeft");
+		state = IDLE;
+	}
+	else if (currentAnimation == "RedAttackRight" || currentAnimation == "RedAttackLeft")
+	{
+		PlayAnimation(facing == RIGHT ? "RedIdleRight" : "RedIdleLeft");
 		state = IDLE;
 	}
 }
