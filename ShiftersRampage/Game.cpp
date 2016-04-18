@@ -18,13 +18,23 @@ Game::Game()
 		break;
 	}
 }
-Game::~Game() {}
+Game::~Game()
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		delete enemies[i];
+	}
+	enemies.clear();
+}
 
 void Game::GameLoop()
 {
 	level = Level("Map3Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
-	enemy = Enemy(graphics, sf::Vector2i(300, 500));
+	enemy = new Enemy(graphics, sf::Vector2i(300, 500));
+	enemy2 = new Enemy(graphics, sf::Vector2i(600, 500));
+	enemies.push_back(enemy);
+	enemies.push_back(enemy2);
 	sf::Event windowEvent;
 	sf::Clock clock;
 
@@ -86,7 +96,7 @@ void Game::GameLoop()
 		if (input.wasKeyPressed(sf::Keyboard::Space) && player.IsGrounded())
 			player.Jump();
 
-		if (input.wasKeyPressed(sf::Keyboard::T) && player.IsGrounded())
+		if (input.wasKeyPressed(sf::Keyboard::T))
 		{
 			player.Attack();
 		}
@@ -106,22 +116,63 @@ void Game::GameLoop()
 void Game::Update(float elapsedTime)
 {
 	player.Update(elapsedTime);
-	enemy.Move(player);
-	enemy.Update(elapsedTime);
+
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		enemies[i]->Move(player.GetBoundingBox());
+		enemies[i]->Update(elapsedTime);
+	}
+	
 	level.Update(elapsedTime);
 
 	std::vector<sf::IntRect> others;
-	std::vector<sf::IntRect> enemyOthers;;
 	others = level.CheckTileCollisions(player.GetBoundingBox());
-	enemyOthers = level.CheckTileCollisions(enemy.GetBoundingBox());
-
 	if (others.size() > 0)
 		player.HandleTileCollision(others);
-	if (enemyOthers.size() > 0)
-		enemy.HandleTileCollision(enemyOthers);
 
-	enemy.CheckPlayerCollision(player);
-	std::cout << "Player health: " << player.GetHealth() << std::endl;
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		std::vector<sf::IntRect> enemyOthers;
+		enemyOthers = level.CheckTileCollisions(enemies[i]->GetBoundingBox());
+		if (enemyOthers.size() > 0)
+			enemies[i]->HandleTileCollision(enemyOthers);
+	}
+
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		if (enemies[i]->CheckPlayerCollision(player.GetBoundingBox()))
+		{
+			player.DepleteHealth(enemies[i]->GetDamageAmount());
+			std::cout << "Player health: " << player.GetHealth() << std::endl;
+		}
+	}
+
+	if (player.GetPlayerState() == ATTACKING)
+	{
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			if (player.CheckAttackHit(enemies[i]->GetBoundingBox()))
+			{
+				if (!enemies[i]->IsDamaged())
+				{
+					enemies[i]->DepleteHealth(player.GetDamageAmount());
+					enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
+					enemies[i]->SetDamaged(true);
+					std::cout << "Enemy health: " << enemies[i]->GetHealth() << std::endl;
+				}
+			}
+			else
+				enemies[i]->SetDamaged(false);
+
+			if (enemies[i]->IsDead())
+			{
+				delete enemies[i];
+				enemies.erase(enemies.begin() + i);
+			}
+		}
+	}
+
+	
 }
 
 void Game::Draw(Graphics& graphics)
@@ -129,6 +180,7 @@ void Game::Draw(Graphics& graphics)
 	graphics.ClearWindow();
 	level.Draw(graphics);
 	player.Draw(graphics);
-	enemy.Draw(graphics);
+	for (int i = 0; i < enemies.size(); i++)
+		enemies[i]->Draw(graphics);
 	graphics.Render();
 }

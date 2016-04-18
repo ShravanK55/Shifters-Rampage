@@ -16,7 +16,10 @@ Enemy::Enemy(Graphics& graphics, sf::Vector2i spawnPoint) :
 	dx(0), dy(0),
 	facing(RIGHT),
 	type(RED),
-	playerDamaged(false)
+	playerDamaged(false),
+	isDamaged(false),
+	hp(100.0f),
+	isDead(false)
 {
 	SetupAnimations();
 	switch (type)
@@ -51,9 +54,15 @@ void Enemy::Draw(Graphics& graphics)
 	AnimatedGameSprite::Draw(graphics);
 }
 
-void Enemy::Move(Player& player)
+const float Enemy::GetDamageAmount() const { return EnemyConstants::ENEMY_DAMAGE; }
+bool Enemy::IsDead() const { return isDead; }
+int Enemy::GetHealth() const { return (int)hp; }
+void Enemy::SetDamaged(bool damaged) { this->isDamaged = damaged; }
+bool Enemy::IsDamaged() const {	return isDamaged; }
+
+void Enemy::Move(const sf::IntRect& playerBox)
 {
-	if (this->position.x < player.GetBoundingBox().left)
+	if (this->position.x < playerBox.left)
 	{
 		if (dx <= EnemyConstants::MAX_SPEED)
 			dx += EnemyConstants::MOVEMENT_SPEED;
@@ -64,7 +73,7 @@ void Enemy::Move(Player& player)
 			dx -= EnemyConstants::MOVEMENT_SPEED;
 	}
 
-	if (this->position.y < player.GetBoundingBox().top)
+	if (this->position.y < playerBox.top)
 	{
 		if (dy <= EnemyConstants::MAX_SPEED)
 			dy += EnemyConstants::MOVEMENT_SPEED;
@@ -98,28 +107,58 @@ void Enemy::StopMoving()
 	dy = 0;
 }
 
-void Enemy::CheckPlayerCollision(Player& player)
+bool Enemy::CheckPlayerCollision(const sf::IntRect& playerRect)
 {
-	if (position.x > player.GetBoundingBox().left &&
-		position.x < player.GetBoundingBox().left + player.GetBoundingBox().width &&
-		position.y > player.GetBoundingBox().top &&
-		position.y < player.GetBoundingBox().top + player.GetBoundingBox().height)
+	if (position.x > playerRect.left &&
+		position.x < playerRect.left + playerRect.width &&
+		position.y > playerRect.top &&
+		position.y < playerRect.top + playerRect.height)
 	{
 		if (!playerDamaged)
 		{
-			DamagePlayer(player);
 			playerDamaged = true;
+			return true;
 		}
+
+		if (playerDamaged)
+			return false;
 	}
 
 	else
+	{
 		playerDamaged = false;
-
+		return false;
+	}
 }
 
-void Enemy::DamagePlayer(Player& player)
+void Enemy::DepleteHealth(float amount)
 {
-	player.DepleteHealth(EnemyConstants::ENEMY_DAMAGE);
+	hp -= amount;
+	if (hp <= 0)
+	{
+		isDead = true;
+		hp = 0;
+	}
+}
+
+void Enemy::Knockback(float amount, Direction attackDirection)
+{
+	switch (attackDirection)
+	{
+	case LEFT:
+		if (dx < 0)
+			dx = -amount;
+		else
+			dx -= amount;
+		break;
+
+	case RIGHT:
+		if (dx > 0)
+			dx = amount;
+		else
+			dx += amount;
+		break;
+	}
 }
 
 void Enemy::SetupAnimations()

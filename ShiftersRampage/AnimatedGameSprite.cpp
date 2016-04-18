@@ -53,15 +53,9 @@ void AnimatedGameSprite::Update(float elapsedTime)
 			frameIndex++;
 		else
 		{
-			/*if (currentAnimationOnce)
-			{
-				SetVisible(false);
-			}*/
-
 			frameIndex = 0;
 			AnimationDone(currentAnimation);
 		}
-
 	}
 }
 

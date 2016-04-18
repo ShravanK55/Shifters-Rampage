@@ -25,7 +25,9 @@ private:
 	PauseMenu pauseMenu;
 
 	Player player;
-	Enemy enemy;
+	std::vector<Enemy*> enemies;
+	Enemy* enemy;
+	Enemy* enemy2;
 	Level level;
 
 	int enemiesKilled;

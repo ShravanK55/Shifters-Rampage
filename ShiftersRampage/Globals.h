@@ -7,6 +7,12 @@ namespace Globals
 	const unsigned int FPS = 60;
 }
 
+enum Direction
+{
+	LEFT,
+	RIGHT
+};
+
 namespace Side
 {
 	enum Side

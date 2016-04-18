@@ -1,11 +1,6 @@
 #pragma once
+#include "Globals.h"
 #include "AnimatedGameSprite.h"
-
-enum Direction
-{
-	LEFT,
-	RIGHT
-};
 
 enum PlayerState
 {
@@ -24,8 +19,11 @@ public:
 	~Player();
 
 	bool IsGrounded() const;
+	Direction GetFacing() const;
 	PlayerState GetPlayerState() const;
+	const float GetDamageAmount() const;
 	void SetGrounded(bool grounded);
+	const float GetKnockbackAmount() const;
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);
@@ -45,6 +43,8 @@ public:
 	const int GetHealth() const;
 	void DepleteHealth(float amount);
 
+	bool CheckAttackHit(const sf::IntRect& enemyBox);
+
 	void SetupAnimations();
 	void SetupHitboxes();
 	void AnimationDone(const std::string& currentAnimation);
@@ -57,6 +57,7 @@ private:
 	bool grounded;
 	PlayerState state;
 	float hp = 100.0f;
+	sf::IntRect currentHitbox;
 
 	std::map<std::string, std::vector<sf::IntRect> > hitBoxes;
 };

@@ -1,6 +1,7 @@
 #pragma once
+#include "Globals.h"
 #include "AnimatedGameSprite.h"
-#include "Player.h"
+
 
 enum EnemyType
 {
@@ -19,11 +20,20 @@ public:
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);
 
-	void Move(Player& player);
+	const float GetDamageAmount() const;
+	bool IsDead() const;
+	int GetHealth() const;
+	void SetDamaged(bool damaged);
+	bool IsDamaged() const;
+
+	void Move(const sf::IntRect& playerBox);
 	void StopMoving();
 
-	void CheckPlayerCollision(Player& player);
-	void DamagePlayer(Player& player);
+	bool CheckPlayerCollision(const sf::IntRect& playerRect);
+
+	void DepleteHealth(float amount);
+
+	void Knockback(float amount, Direction attackDirection);
 
 	void SetupAnimations();
 	void AnimationDone(const std::string& currentAnimation);
@@ -35,7 +45,9 @@ protected:
 	Direction facing;
 	EnemyType type;
 	bool playerDamaged;
+	bool isDamaged;
 	int hp;
+	bool isDead;
 
 private:
 

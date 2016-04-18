@@ -7,6 +7,8 @@ namespace PlayerConstants
 	const float GRAVITY = 0.03f;
 	const float GRAVITY_CAP = 0.5f;
 	const float AIR_DRAG = 1.2f;
+	const float ATTACK_DAMAGE = 50.0f;
+	const float KNOCKBACK_AMOUNT = 1.2f;
 }
 
 Player::Player() {}
@@ -15,9 +17,11 @@ Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
 	AnimatedGameSprite(graphics, "Spritesheets/Hero.png", 0, 0, 48, 32, spawnPoint.x, spawnPoint.y, 100.0f, 2.0f),
 	dx(0.0f), dy(0.0f),
 	grounded(false),
-	state(IDLE)
+	state(IDLE),
+	currentHitbox(sf::IntRect())
 {
 	SetupAnimations();
+	SetupHitboxes();
 	PlayAnimation("IdleRight");
 	facing = RIGHT;
 }
@@ -26,8 +30,11 @@ Player::~Player()
 {}
 
 bool Player::IsGrounded() const { return grounded; }
+Direction Player::GetFacing() const { return facing; }
 PlayerState Player::GetPlayerState() const { return state; }
+const float Player::GetDamageAmount() const { return PlayerConstants::ATTACK_DAMAGE; }
 void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
+const float Player::GetKnockbackAmount() const { return PlayerConstants::KNOCKBACK_AMOUNT; }
 
 void Player::Update(float elapsedTime)
 {
@@ -37,9 +44,6 @@ void Player::Update(float elapsedTime)
 		{
 			dy += PlayerConstants::GRAVITY;
 
-			if (dy > 0)
-				state = FALLING;
-
 			if (dx != 0)
 				dx = dx / PlayerConstants::AIR_DRAG;
 		}
@@ -48,7 +52,14 @@ void Player::Update(float elapsedTime)
 	position.x += dx * elapsedTime;
 	position.y += dy * elapsedTime;
 	sprite.setPosition(position);
+
 	AnimatedGameSprite::Update(elapsedTime);
+
+	if (this->GetPlayerState() == ATTACKING)
+		currentHitbox = sf::IntRect(hitBoxes[currentAnimation][frameIndex].left + position.x, 
+									hitBoxes[currentAnimation][frameIndex].top + position.y, 
+									hitBoxes[currentAnimation][frameIndex].left + hitBoxes[currentAnimation][frameIndex].width + position.x,
+									hitBoxes[currentAnimation][frameIndex].top + hitBoxes[currentAnimation][frameIndex].height + position.y);
 }
 
 void Player::Draw(Graphics& graphics)
@@ -117,6 +128,14 @@ void Player::DepleteHealth(float amount)
 		hp = 0.0f;
 }
 
+bool Player::CheckAttackHit(const sf::IntRect& enemyBox)
+{
+	if (currentHitbox.intersects(enemyBox))
+		return true;
+	else
+		return false;
+}
+
 void Player::SetupAnimations()
 {
 	AddAnimation("IdleLeft", 4, 0, 96, 48, 32, sf::Vector2f(0.0f, 0.0f));
@@ -130,16 +149,16 @@ void Player::SetupAnimations()
 void Player::SetupHitboxes()
 {
 	std::vector<sf::IntRect> hitBoxRight;
-	hitBoxRight.push_back(sf::IntRect());
-	hitBoxRight.push_back(sf::IntRect());
+	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
+	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
 	hitBoxRight.push_back(sf::IntRect(17, 10, 30, 22));
-	hitBoxRight.push_back(sf::IntRect());
+	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
 
 	std::vector<sf::IntRect> hitBoxLeft;
-	hitBoxLeft.push_back(sf::IntRect());
-	hitBoxLeft.push_back(sf::IntRect());
+	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
+	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
 	hitBoxLeft.push_back(sf::IntRect(0, 10, 30, 22));
-	hitBoxLeft.push_back(sf::IntRect());
+	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
 
 	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackRight", hitBoxRight));
 	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("AttackLeft", hitBoxLeft));

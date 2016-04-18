@@ -20,6 +20,7 @@ protected:
 	double timeToUpdate;
 	bool currentAnimationOnce;
 	std::string currentAnimation;
+	int frameIndex;
 
 	void SetVisible(bool visible);
 
@@ -34,7 +35,6 @@ private:
 	std::map<std::string, std::vector<sf::IntRect> > animations;
 	std::map<std::string, sf::Vector2f> offsets;
 
-	int frameIndex;
 	float timeElapsed;
 	bool visible;
 };
