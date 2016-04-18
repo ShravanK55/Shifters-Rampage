@@ -4,8 +4,10 @@
 class EnemySpawn
 {
 public:
+	std::vector<Enemy*> enemies;
+
 	EnemySpawn();
-	EnemySpawn(Graphics* graphics, sf::Vector2i spawnPoint);
+	EnemySpawn(Graphics* graphics, sf::Vector2i spawnPoint, int randomSeed);
 	~EnemySpawn();
 
 	std::vector<Enemy*>& GetEnemies();
@@ -13,7 +15,6 @@ public:
 	void UpdateSpawn(float elapsedTime);
 
 private:
-	std::vector<Enemy*> enemies;
 	float timeElapsed;
 	sf::Vector2i spawnPosition;
 	Graphics* graphics;

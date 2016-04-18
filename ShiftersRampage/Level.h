@@ -33,6 +33,7 @@ public:
 	void Draw(Graphics& graphics);
 
 	const sf::Vector2i GetSpawnPoint() const;
+	std::vector<sf::Vector2i> GetEnemySpawns() const;
 
 	std::vector<sf::IntRect> CheckTileCollisions(const sf::IntRect& other);
 
@@ -48,6 +49,8 @@ private:
 	std::vector<Tile> tileList;
 	std::vector<Tileset> tilesetList;
 	std::vector<sf::IntRect> collisionRects;
+
+	std::vector<sf::Vector2i> enemySpawns;
 
 	void LoadMap(const std::string& mapName, Graphics& graphics);
 };

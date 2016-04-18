@@ -6,7 +6,7 @@ namespace EnemyConstants
 	const float MAX_SPEED = 0.5f;
 	const int MAX_DISTANCE = 10;
 	const float FRIGHT_AMOUNT = 5.0f;
-	const float ENEMY_DAMAGE = 10.0f;
+	const float ENEMY_DAMAGE = 3.0f;
 }
 
 Enemy::Enemy() {}

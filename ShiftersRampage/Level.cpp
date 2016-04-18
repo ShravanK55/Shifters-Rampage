@@ -25,6 +25,7 @@ void Level::Draw(Graphics& graphics)
 }
 
 const sf::Vector2i Level::GetSpawnPoint() const { return spawnPoint; }
+std::vector<sf::Vector2i> Level::GetEnemySpawns() const { return enemySpawns; }
 
 std::vector<sf::IntRect> Level::CheckTileCollisions(const sf::IntRect& other)
 {
@@ -205,10 +206,12 @@ void Level::LoadMap(const std::string& mapName, Graphics& graphics)
 						std::stringstream ss;
 						ss << name;
 
-						if (ss.str() == "SpawnPoint")
-						{
+						if (ss.str() == "PlayerSpawnPoint")
 							spawnPoint = sf::Vector2i(x, y);
-						}
+						else if (ss.str() == "EnemySpawn1")
+							enemySpawns.push_back(sf::Vector2i(x, y));
+						else if (ss.str() == "EnemySpawn2")
+							enemySpawns.push_back(sf::Vector2i(x, y));
 
 						pObject = pObject->NextSiblingElement("object");
 					}

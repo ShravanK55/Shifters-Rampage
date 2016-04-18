@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <map>
 #include <string>
 
@@ -18,6 +17,7 @@ public:
 
 	void ClearWindow();
 	void BlitSurface(sf::Sprite& sprite, sf::IntRect sourceRect);
+	void DrawText(sf::Text& text);
 	void Render();
 
 private:

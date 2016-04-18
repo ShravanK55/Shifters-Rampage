@@ -19,7 +19,7 @@ Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
 	grounded(false),
 	state(IDLE),
 	currentHitbox(sf::IntRect()),
-	form(SwordForm::BLUE)
+	form(SwordForm::RED)
 {
 	SetupAnimations();
 	SetupHitboxes();
@@ -53,6 +53,7 @@ const float Player::GetDamageAmount() const { return PlayerConstants::ATTACK_DAM
 void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
 const float Player::GetKnockbackAmount() const { return PlayerConstants::KNOCKBACK_AMOUNT; }
 SwordForm Player::GetSwordForm() const { return form; }
+void Player::ResetHP() { hp = 100; }
 
 void Player::Update(float elapsedTime)
 {
@@ -76,8 +77,8 @@ void Player::Update(float elapsedTime)
 	if (this->GetPlayerState() == ATTACKING)
 		currentHitbox = sf::IntRect(hitBoxes[currentAnimation][frameIndex].left + position.x, 
 									hitBoxes[currentAnimation][frameIndex].top + position.y, 
-									hitBoxes[currentAnimation][frameIndex].left + hitBoxes[currentAnimation][frameIndex].width + position.x,
-									hitBoxes[currentAnimation][frameIndex].top + hitBoxes[currentAnimation][frameIndex].height + position.y);
+									hitBoxes[currentAnimation][frameIndex].width,
+									hitBoxes[currentAnimation][frameIndex].height);
 }
 
 void Player::Draw(Graphics& graphics)
@@ -255,13 +256,13 @@ void Player::SetupHitboxes()
 	std::vector<sf::IntRect> hitBoxRight;
 	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
 	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
-	hitBoxRight.push_back(sf::IntRect(17, 10, 30, 22));
+	hitBoxRight.push_back(sf::IntRect(10, 10, 60, 70));
 	hitBoxRight.push_back(sf::IntRect(0, 0, 0, 0));
 
 	std::vector<sf::IntRect> hitBoxLeft;
 	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
 	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
-	hitBoxLeft.push_back(sf::IntRect(0, 10, 30, 22));
+	hitBoxLeft.push_back(sf::IntRect(0, 10, 60, 70));
 	hitBoxLeft.push_back(sf::IntRect(0, 0, 0, 0));
 
 	hitBoxes.insert(std::pair<std::string, std::vector<sf::IntRect> >("BlueAttackRight", hitBoxRight));

@@ -44,6 +44,11 @@ void Graphics::BlitSurface(sf::Sprite& sprite, sf::IntRect sourceRect)
 	window.draw(sprite);
 }
 
+void Graphics::DrawText(sf::Text& text)
+{
+	window.draw(text);
+}
+
 void Graphics::Render()
 {
 	window.display();

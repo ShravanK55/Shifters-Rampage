@@ -1363,7 +1363,7 @@ public:
     	If the first child of 'this' is a XMLText, the GetText()
     	returns the character string of the Text node, else null is returned.
 
-    	This is a convenient method for getting the text of simple contained text:
+    	This is a convenient method for getting the text of simple contained playerHealth:
     	@verbatim
     	<foo>This is text</foo>
     		const char* str = fooElement->GetText();
@@ -1393,7 +1393,7 @@ public:
     	If the first child of 'this' is a XMLText, SetText() sets its value to
 		the given string, otherwise it will create a first child that is an XMLText.
 
-    	This is a convenient method for setting the text of simple contained text:
+    	This is a convenient method for setting the text of simple contained playerHealth:
     	@verbatim
     	<foo>This is text</foo>
     		fooElement->SetText( "Hullaballoo!" );
@@ -1406,7 +1406,7 @@ public:
     		<foo><b>This is text</b></foo>
     	@endverbatim
 
-    	then it will not change "This is text", but rather prefix it with a text element:
+    	then it will not change "This is text", but rather prefix it with a playerHealth element:
     	@verbatim
     		<foo>Hullaballoo!<b>This is text</b></foo>
     	@endverbatim

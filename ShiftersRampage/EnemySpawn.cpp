@@ -2,21 +2,30 @@
 
 namespace EnemySpawnConstants
 {
-	const float ENEMY_SPAWN_TIME = 5000.0f;
+	const float ENEMY_SPAWN_TIME = 6500.0f;
 };
 
 EnemySpawn::EnemySpawn()
 {
 }
 
-EnemySpawn::EnemySpawn(Graphics* graphics, sf::Vector2i spawnPoint) :
+EnemySpawn::EnemySpawn(Graphics* graphics, sf::Vector2i spawnPoint, int randomSeed) :
 	graphics(graphics),
 	spawnPosition(spawnPoint),
-	timeElapsed(0)
+	timeElapsed(0.0f)
 {
-	srand(time(NULL));
-	enemies.push_back(new Enemy(*graphics, spawnPoint, EnemyType::GREEN));
-	enemies.push_back(new Enemy(*graphics, spawnPoint, EnemyType::BLUE));
+	srand(randomSeed);
+	int randNum = rand() % 3;
+	Enemy* enemy;
+
+	if (randNum == 0)
+		enemy = new Enemy(*graphics, spawnPosition, EnemyType::RED);
+	else if (randNum == 1)
+		enemy = new Enemy(*graphics, spawnPosition, EnemyType::GREEN);
+	else if (randNum == 2)
+		enemy = new Enemy(*graphics, spawnPosition, EnemyType::BLUE);
+
+	enemies.push_back(enemy);
 }
 
 EnemySpawn::~EnemySpawn()
@@ -25,8 +34,6 @@ EnemySpawn::~EnemySpawn()
 		delete enemies[i];
 	enemies.clear();
 }
-
-std::vector<Enemy*>& EnemySpawn::GetEnemies() {	return enemies; }
 
 void EnemySpawn::UpdateSpawn(float elapsedTime)
 {

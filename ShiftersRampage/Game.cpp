@@ -20,25 +20,38 @@ Game::Game()
 }
 Game::~Game()
 {
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		delete enemies[i];
-	}
-	enemies.clear();
+	delete enemySpawn1;
+	delete enemySpawn2;
 }
 
 void Game::GameLoop()
 {
+	sf::Clock clock;
+	sf::Event windowEvent;
 	level = Level("Map3Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
-	// enemySpawn = EnemySpawn(&graphics, sf::Vector2i(300, 500));
-	enemy = new Enemy(graphics, sf::Vector2i(300, 500), EnemyType::GREEN);
-	enemy2 = new Enemy(graphics, sf::Vector2i(600, 500), EnemyType::RED);
-	enemies.push_back(enemy);
-	enemies.push_back(enemy2);
-	sf::Event windowEvent;
-	sf::Clock clock;
+	enemySpawn1 = new EnemySpawn(&graphics, level.GetEnemySpawns()[0], clock.getElapsedTime().asMilliseconds());
+	enemySpawn2 = new EnemySpawn(&graphics, level.GetEnemySpawns()[1], clock.getElapsedTime().asSeconds() * 3);
 
+	score = 0;
+	enemiesKilled = 0;
+
+	font.loadFromFile("Fonts/KenPixel Mini.ttf");
+
+	std::stringstream pHealth, pScore;
+	pHealth << "Health: " << player.GetHealth();
+	pScore << "Score: " << score;
+
+	playerHealth.setFont(font);
+	playerHealth.setString(pHealth.str());
+	playerHealth.setCharacterSize(15);
+	playerHealth.setPosition(5, 5);
+
+	playerScore.setFont(font);
+	playerScore.setString(pScore.str());
+	playerScore.setCharacterSize(15);
+	playerScore.setPosition(5, 20);
+	
 	int previousFrameTime = clock.getElapsedTime().asMilliseconds();
 	int currentFrameTime, elapsedTime;
 
@@ -98,9 +111,7 @@ void Game::GameLoop()
 			player.Jump();
 
 		if (input.wasKeyPressed(sf::Keyboard::T))
-		{
 			player.Attack();
-		}
 
 		if (input.wasKeyPressed(sf::Keyboard::Z))
 			player.TransformRed();
@@ -117,12 +128,19 @@ void Game::GameLoop()
 void Game::Update(float elapsedTime)
 {
 	player.Update(elapsedTime);
-	// enemySpawn.UpdateSpawn(elapsedTime);
+	enemySpawn1->UpdateSpawn(elapsedTime);
+	enemySpawn2->UpdateSpawn(elapsedTime);
 
-	for (int i = 0; i < enemies.size(); i++)
+	for (int i = 0; i < enemySpawn1->enemies.size(); i++)
 	{
-		enemies[i]->Move(player.GetBoundingBox());
-		enemies[i]->Update(elapsedTime);
+		enemySpawn1->enemies[i]->Move(player.GetBoundingBox());
+		enemySpawn1->enemies[i]->Update(elapsedTime);
+	}
+
+	for (int i = 0; i < enemySpawn2->enemies.size(); i++)
+	{
+		enemySpawn2->enemies[i]->Move(player.GetBoundingBox());
+		enemySpawn2->enemies[i]->Update(elapsedTime);
 	}
 	
 	level.Update(elapsedTime);
@@ -132,58 +150,117 @@ void Game::Update(float elapsedTime)
 	if (others.size() > 0)
 		player.HandleTileCollision(others);
 
-	for (int i = 0; i < enemies.size(); i++)
+
+
+	for (int i = 0; i < enemySpawn1->enemies.size(); i++)
 	{
 		std::vector<sf::IntRect> enemyOthers;
-		enemyOthers = level.CheckTileCollisions(enemies[i]->GetBoundingBox());
+		enemyOthers = level.CheckTileCollisions(enemySpawn1->enemies[i]->GetBoundingBox());
 		if (enemyOthers.size() > 0)
-			enemies[i]->HandleTileCollision(enemyOthers);
+			enemySpawn1->enemies[i]->HandleTileCollision(enemyOthers);
 	}
 
-	for (int i = 0; i < enemies.size(); i++)
+	for (int i = 0; i < enemySpawn2->enemies.size(); i++)
 	{
-		if (enemies[i]->CheckPlayerCollision(player.GetBoundingBox()))
+		std::vector<sf::IntRect> enemyOthers;
+		enemyOthers = level.CheckTileCollisions(enemySpawn2->enemies[i]->GetBoundingBox());
+		if (enemyOthers.size() > 0)
+			enemySpawn2->enemies[i]->HandleTileCollision(enemyOthers);
+	}
+
+
+
+	for (int i = 0; i < enemySpawn1->enemies.size(); i++)
+	{
+		if (enemySpawn1->enemies[i]->CheckPlayerCollision(player.GetBoundingBox()))
 		{
-			player.DepleteHealth(enemies[i]->GetDamageAmount());
-			std::cout << "Player health: " << player.GetHealth() << std::endl;
+			player.DepleteHealth(enemySpawn1->enemies[i]->GetDamageAmount());
 		}
 	}
 
+	for (int i = 0; i < enemySpawn2->enemies.size(); i++)
+	{
+		if (enemySpawn2->enemies[i]->CheckPlayerCollision(player.GetBoundingBox()))
+		{
+			player.DepleteHealth(enemySpawn2->enemies[i]->GetDamageAmount());
+		}
+	}
+
+
+
 	if (player.GetPlayerState() == ATTACKING)
 	{
-		for (int i = 0; i < enemies.size(); i++)
+		for (int i = 0; i < enemySpawn1->enemies.size(); i++)
 		{
-			if (player.CheckAttackHit(enemies[i]->GetBoundingBox()))
+			if (player.CheckAttackHit(enemySpawn1->enemies[i]->GetBoundingBox()))
 			{
-				if (!enemies[i]->IsDamaged())
+				if (!enemySpawn1->enemies[i]->IsDamaged())
 				{
-					if ((enemies[i]->GetEnemyType() == EnemyType::RED && player.GetSwordForm() == SwordForm::RED) ||
-						(enemies[i]->GetEnemyType() == EnemyType::GREEN && player.GetSwordForm() == SwordForm::GREEN) ||
-						(enemies[i]->GetEnemyType() == EnemyType::BLUE && player.GetSwordForm() == SwordForm::BLUE))
+					if ((enemySpawn1->enemies[i]->GetEnemyType() == EnemyType::RED && player.GetSwordForm() == SwordForm::RED) ||
+						(enemySpawn1->enemies[i]->GetEnemyType() == EnemyType::GREEN && player.GetSwordForm() == SwordForm::GREEN) ||
+						(enemySpawn1->enemies[i]->GetEnemyType() == EnemyType::BLUE && player.GetSwordForm() == SwordForm::BLUE))
 					{
-						enemies[i]->DepleteHealth(player.GetDamageAmount());
-						enemies[i]->SetColor(sf::Color(255, 0, 0));
+						enemySpawn1->enemies[i]->DepleteHealth(player.GetDamageAmount());
+						enemySpawn1->enemies[i]->SetColor(sf::Color(255, 0, 0));
 					}
-					enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
-					enemies[i]->SetDamaged(true);
-					std::cout << "Enemy health: " << enemies[i]->GetHealth() << std::endl;
+					enemySpawn1->enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
+					enemySpawn1->enemies[i]->SetDamaged(true);
 				}
 			}
 			else
 			{
-				enemies[i]->SetDamaged(false);
-				enemies[i]->SetColor(sf::Color(255, 255, 255));
+				enemySpawn1->enemies[i]->SetDamaged(false);
+				enemySpawn1->enemies[i]->SetColor(sf::Color(255, 255, 255));
 			}
 
-			if (enemies[i]->IsDead())
+			if (enemySpawn1->enemies[i]->IsDead())
 			{
-				delete enemies[i];
-				enemies.erase(enemies.begin() + i);
+				enemiesKilled++;
+				score += 100;
+				delete enemySpawn1->enemies[i];
+				enemySpawn1->enemies.erase(enemySpawn1->enemies.begin() + i);
+			}
+		}
+
+		for (int i = 0; i < enemySpawn2->enemies.size(); i++)
+		{
+			if (player.CheckAttackHit(enemySpawn2->enemies[i]->GetBoundingBox()))
+			{
+				if (!enemySpawn2->enemies[i]->IsDamaged())
+				{
+					if ((enemySpawn2->enemies[i]->GetEnemyType() == EnemyType::RED && player.GetSwordForm() == SwordForm::RED) ||
+						(enemySpawn2->enemies[i]->GetEnemyType() == EnemyType::GREEN && player.GetSwordForm() == SwordForm::GREEN) ||
+						(enemySpawn2->enemies[i]->GetEnemyType() == EnemyType::BLUE && player.GetSwordForm() == SwordForm::BLUE))
+					{
+						enemySpawn2->enemies[i]->DepleteHealth(player.GetDamageAmount());
+						enemySpawn2->enemies[i]->SetColor(sf::Color(255, 0, 0));
+					}
+					enemySpawn2->enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
+					enemySpawn2->enemies[i]->SetDamaged(true);
+				}
+			}
+			else
+			{
+				enemySpawn2->enemies[i]->SetDamaged(false);
+				enemySpawn2->enemies[i]->SetColor(sf::Color(255, 255, 255));
+			}
+
+			if (enemySpawn2->enemies[i]->IsDead())
+			{
+				enemiesKilled++;
+				score += 100;
+				delete enemySpawn2->enemies[i];
+				enemySpawn2->enemies.erase(enemySpawn2->enemies.begin() + i);
 			}
 		}
 	}
 
-	
+	std::stringstream pHealth, pScore;
+	pHealth << "Health: " << player.GetHealth();
+	pScore << "Score: " << score;
+
+	playerHealth.setString(pHealth.str());
+	playerScore.setString(pScore.str());
 }
 
 void Game::Draw(Graphics& graphics)
@@ -191,7 +268,11 @@ void Game::Draw(Graphics& graphics)
 	graphics.ClearWindow();
 	level.Draw(graphics);
 	player.Draw(graphics);
-	for (int i = 0; i < enemies.size(); i++)
-		enemies[i]->Draw(graphics);
+	for (int i = 0; i < enemySpawn1->enemies.size(); i++)
+		enemySpawn1->enemies[i]->Draw(graphics);
+	for (int i = 0; i < enemySpawn2->enemies.size(); i++)
+		enemySpawn2->enemies[i]->Draw(graphics);
+	graphics.GetRenderWindow().draw(playerHealth);
+	graphics.GetRenderWindow().draw(playerScore);
 	graphics.Render();
 }

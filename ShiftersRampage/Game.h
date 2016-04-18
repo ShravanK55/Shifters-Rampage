@@ -26,11 +26,13 @@ private:
 	PauseMenu pauseMenu;
 
 	Player player;
-	std::vector<Enemy*> enemies;
-	Enemy* enemy;
-	Enemy* enemy2;
-	EnemySpawn enemySpawn;
+	EnemySpawn* enemySpawn1;
+	EnemySpawn* enemySpawn2;
 	Level level;
+
+	sf::Font font;
+	sf::Text playerHealth;
+	sf::Text playerScore;
 
 	int enemiesKilled;
 	int score;
