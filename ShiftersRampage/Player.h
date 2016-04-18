@@ -32,6 +32,9 @@ public:
 	void SetGrounded(bool grounded);
 	const float GetKnockbackAmount() const;
 	SwordForm GetSwordForm() const;
+	bool IsPlayerDead() const;
+
+	void ResetHP();
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);
@@ -64,9 +67,10 @@ private:
 	Direction facing;
 	bool grounded;
 	PlayerState state;
-	float hp = 100.0f;
+	float hp;
 	sf::IntRect currentHitbox;
 	SwordForm form;
+	bool isDead;
 
 	std::map<std::string, std::vector<sf::IntRect> > hitBoxes;
 };

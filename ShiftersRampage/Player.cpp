@@ -2,6 +2,7 @@
 
 namespace PlayerConstants
 {
+	const float PLAYER_HP = 100.0f;
 	const float JUMP_HEIGHT = -0.6f;
 	const float WALK_SPEED = 0.4f;
 	const float GRAVITY = 0.03f;
@@ -18,8 +19,10 @@ Player::Player(Graphics& graphics, sf::Vector2i spawnPoint) :
 	dx(0.0f), dy(0.0f),
 	grounded(false),
 	state(IDLE),
+	hp(PlayerConstants::PLAYER_HP),
 	currentHitbox(sf::IntRect()),
-	form(SwordForm::RED)
+	form(SwordForm::RED),
+	isDead(false)
 {
 	SetupAnimations();
 	SetupHitboxes();
@@ -53,7 +56,13 @@ const float Player::GetDamageAmount() const { return PlayerConstants::ATTACK_DAM
 void Player::SetGrounded(bool grounded) { this->grounded = grounded; }
 const float Player::GetKnockbackAmount() const { return PlayerConstants::KNOCKBACK_AMOUNT; }
 SwordForm Player::GetSwordForm() const { return form; }
-void Player::ResetHP() { hp = 100; }
+bool Player::IsPlayerDead() const { return isDead; }
+
+void Player::ResetHP()
+{
+	hp = 100;
+	isDead = false;
+}
 
 void Player::Update(float elapsedTime)
 {
@@ -216,7 +225,10 @@ void Player::DepleteHealth(float amount)
 {
 	hp -= amount;
 	if (hp < 0.0f)
+	{
 		hp = 0.0f;
+		isDead = true;
+	}
 }
 
 bool Player::CheckAttackHit(const sf::IntRect& enemyBox)

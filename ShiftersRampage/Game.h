@@ -11,6 +11,7 @@
 #include "PauseMenu.h"
 #include "Enemy.h"
 #include "EnemySpawn.h"
+#include "GameOverMenu.h"
 
 class Game
 {
@@ -24,6 +25,7 @@ private:
 
 	MainMenu mainMenu;
 	PauseMenu pauseMenu;
+	GameOverMenu gameOverMenu;
 
 	Player player;
 	EnemySpawn* enemySpawn1;
@@ -36,6 +38,8 @@ private:
 
 	int enemiesKilled;
 	int score;
+
+	void Reset();
 
 	void Update(float elapsedTime);
 	void Draw(Graphics& graphics);

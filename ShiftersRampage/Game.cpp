@@ -5,6 +5,9 @@ Game::Game()
 {
 	MainMenuAction result = mainMenu.DisplayMenu(graphics);
 	
+	score = 0;
+	enemiesKilled = 0;
+
 	switch (result)
 	{
 	case MainMenuAction::PLAY:
@@ -17,11 +20,42 @@ Game::Game()
 	case MainMenuAction::NONE:
 		break;
 	}
+
+	while (true)
+	{
+		gameOverMenu = GameOverMenu(score, enemiesKilled);
+		GameOverMenuAction gResult = gameOverMenu.DisplayMenu(graphics);
+
+		switch (gResult)
+		{
+		case GameOverMenuAction::YES:
+			Reset();
+			GameLoop();
+			break;
+
+		case GameOverMenuAction::NO:
+			return;
+
+		case GameOverMenuAction::NONE:
+			break;
+		}
+	}
+
 }
 Game::~Game()
 {
 	delete enemySpawn1;
 	delete enemySpawn2;
+}
+
+void Game::Reset()
+{
+	delete enemySpawn1;
+	delete enemySpawn2;
+
+	score = 0;
+	enemiesKilled = 0;
+	player.ResetHP();
 }
 
 void Game::GameLoop()
@@ -32,9 +66,6 @@ void Game::GameLoop()
 	player = Player(graphics, level.GetSpawnPoint());
 	enemySpawn1 = new EnemySpawn(&graphics, level.GetEnemySpawns()[0], clock.getElapsedTime().asMilliseconds());
 	enemySpawn2 = new EnemySpawn(&graphics, level.GetEnemySpawns()[1], clock.getElapsedTime().asSeconds() * 3);
-
-	score = 0;
-	enemiesKilled = 0;
 
 	font.loadFromFile("Fonts/KenPixel Mini.ttf");
 
@@ -122,6 +153,9 @@ void Game::GameLoop()
 
 		Update(elapsedTime);
 		Draw(graphics);
+
+		if (player.IsPlayerDead())
+			return;
 	}
 }
 
