@@ -10,6 +10,7 @@ namespace PlayerConstants
 	const float AIR_DRAG = 1.2f;
 	const float ATTACK_DAMAGE = 50.0f;
 	const float KNOCKBACK_AMOUNT = 1.2f;
+	const float HP_HEAL = 6.0f;
 }
 
 Player::Player() {}
@@ -229,6 +230,11 @@ void Player::DepleteHealth(float amount)
 		hp = 0.0f;
 		isDead = true;
 	}
+}
+
+void Player::HealHealth()
+{
+	hp += PlayerConstants::HP_HEAL;
 }
 
 bool Player::CheckAttackHit(const sf::IntRect& enemyBox)

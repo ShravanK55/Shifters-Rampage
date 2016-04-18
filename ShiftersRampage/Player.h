@@ -53,6 +53,7 @@ public:
 
 	const int GetHealth() const;
 	void DepleteHealth(float amount);
+	void HealHealth();
 
 	bool CheckAttackHit(const sf::IntRect& enemyBox);
 

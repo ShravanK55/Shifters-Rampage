@@ -114,6 +114,14 @@ void Game::GameLoop()
 				input.KeyUpEvent(windowEvent);
 				break;
 
+			case sf::Event::MouseButtonPressed:
+				input.MouseButtonPressed(windowEvent);
+				break;
+
+			case sf::Event::MouseButtonReleased:
+				input.MouseButtonReleased(windowEvent);
+				break;
+
 			default:
 				break;
 			}
@@ -147,14 +155,14 @@ void Game::GameLoop()
 		if (input.wasKeyPressed(sf::Keyboard::Space) && player.IsGrounded())
 			player.Jump();
 
-		if (input.wasKeyPressed(sf::Keyboard::T))
+		if (input.wasMouseButtonPressed(sf::Mouse::Button::Left) || input.wasKeyPressed(sf::Keyboard::Return) || input.wasKeyPressed(sf::Keyboard::T))
 			player.Attack();
 
-		if (input.wasKeyPressed(sf::Keyboard::Z))
+		if (input.wasKeyPressed(sf::Keyboard::Num1) || input.wasKeyPressed(sf::Keyboard::W))
 			player.TransformRed();
-		if (input.wasKeyPressed(sf::Keyboard::X))
+		if (input.wasKeyPressed(sf::Keyboard::Num2) || input.wasKeyPressed(sf::Keyboard::S))
 			player.TransformGreen();
-		if (input.wasKeyPressed(sf::Keyboard::C))
+		if (input.wasKeyPressed(sf::Keyboard::Num3) || input.wasKeyPressed(sf::Keyboard::X))
 			player.TransformBlue();
 
 		Update(elapsedTime);
@@ -257,6 +265,7 @@ void Game::Update(float elapsedTime)
 			{
 				enemiesKilled++;
 				score += 100;
+				player.HealHealth();
 				delete enemySpawn1->enemies[i];
 				enemySpawn1->enemies.erase(enemySpawn1->enemies.begin() + i);
 			}
@@ -289,6 +298,7 @@ void Game::Update(float elapsedTime)
 			{
 				enemiesKilled++;
 				score += 100;
+				player.HealHealth();
 				delete enemySpawn2->enemies[i];
 				enemySpawn2->enemies.erase(enemySpawn2->enemies.begin() + i);
 			}
