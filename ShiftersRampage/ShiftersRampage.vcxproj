@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="AnimatedGameSprite.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemySpawn.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSprite.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="AnimatedGameSprite.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemySpawn.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSprite.h" />
     <ClInclude Include="Globals.h" />

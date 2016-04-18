@@ -14,7 +14,7 @@ class Enemy : public AnimatedGameSprite
 {
 public:
 	Enemy();
-	Enemy(Graphics& graphics, sf::Vector2i spawnPoint);
+	Enemy(Graphics& graphics, sf::Vector2i spawnPoint, EnemyType type);
 	~Enemy();
 
 	void Update(float elapsedTime);

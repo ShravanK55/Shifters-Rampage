@@ -31,8 +31,9 @@ void Game::GameLoop()
 {
 	level = Level("Map3Game", sf::Vector2i(100, 100), graphics);
 	player = Player(graphics, level.GetSpawnPoint());
-	enemy = new Enemy(graphics, sf::Vector2i(300, 500));
-	enemy2 = new Enemy(graphics, sf::Vector2i(600, 500));
+	// enemySpawn = EnemySpawn(&graphics, sf::Vector2i(300, 500));
+	enemy = new Enemy(graphics, sf::Vector2i(300, 500), EnemyType::GREEN);
+	enemy2 = new Enemy(graphics, sf::Vector2i(600, 500), EnemyType::RED);
 	enemies.push_back(enemy);
 	enemies.push_back(enemy2);
 	sf::Event windowEvent;
@@ -116,6 +117,7 @@ void Game::GameLoop()
 void Game::Update(float elapsedTime)
 {
 	player.Update(elapsedTime);
+	// enemySpawn.UpdateSpawn(elapsedTime);
 
 	for (int i = 0; i < enemies.size(); i++)
 	{
@@ -155,9 +157,14 @@ void Game::Update(float elapsedTime)
 			{
 				if (!enemies[i]->IsDamaged())
 				{
-					enemies[i]->DepleteHealth(player.GetDamageAmount());
+					if ((enemies[i]->GetEnemyType() == EnemyType::RED && player.GetSwordForm() == SwordForm::RED) ||
+						(enemies[i]->GetEnemyType() == EnemyType::GREEN && player.GetSwordForm() == SwordForm::GREEN) ||
+						(enemies[i]->GetEnemyType() == EnemyType::BLUE && player.GetSwordForm() == SwordForm::BLUE))
+					{
+						enemies[i]->DepleteHealth(player.GetDamageAmount());
+						enemies[i]->SetColor(sf::Color(255, 0, 0));
+					}
 					enemies[i]->Knockback(player.GetKnockbackAmount(), player.GetFacing());
-					enemies[i]->SetColor(sf::Color(255, 0, 0));
 					enemies[i]->SetDamaged(true);
 					std::cout << "Enemy health: " << enemies[i]->GetHealth() << std::endl;
 				}

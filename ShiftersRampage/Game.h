@@ -10,6 +10,7 @@
 #include "MainMenu.h"
 #include "PauseMenu.h"
 #include "Enemy.h"
+#include "EnemySpawn.h"
 
 class Game
 {
@@ -28,6 +29,7 @@ private:
 	std::vector<Enemy*> enemies;
 	Enemy* enemy;
 	Enemy* enemy2;
+	EnemySpawn enemySpawn;
 	Level level;
 
 	int enemiesKilled;

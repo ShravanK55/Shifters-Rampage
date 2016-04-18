@@ -11,11 +11,11 @@ namespace EnemyConstants
 
 Enemy::Enemy() {}
 
-Enemy::Enemy(Graphics& graphics, sf::Vector2i spawnPoint) :
+Enemy::Enemy(Graphics& graphics, sf::Vector2i spawnPoint, EnemyType type) :
 	AnimatedGameSprite(graphics, "Spritesheets/ProtoEnemy.png", 0, 0, 48, 32, spawnPoint.x, spawnPoint.y, 100.0f, 1.0f),
 	dx(0), dy(0),
 	facing(RIGHT),
-	type(EnemyType::GREEN),
+	type(type),
 	playerDamaged(false),
 	isDamaged(false),
 	hp(100.0f),
