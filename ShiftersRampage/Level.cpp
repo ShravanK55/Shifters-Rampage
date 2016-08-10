@@ -135,9 +135,8 @@ void Level::LoadMap(const std::string& mapName, Graphics& graphics)
 							}
 
 							int xx = 0, yy = 0;
-							xx = tileCounter % width;
-							xx *= tileWidth;
-							yy += tileHeight * (tileCounter / width);
+							xx = tileWidth * (tileCounter % width);
+							yy = tileHeight * (tileCounter / width);
 							sf::Vector2i finalTilePosition(xx, yy);
 
 							int tilesetWidth = tls.texture->getSize().x;
