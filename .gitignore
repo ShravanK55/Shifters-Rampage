@@ -253,6 +253,7 @@ paket-files/
 
 # Additional Dependencies
 deps/
+ShiftersRampage/Fonts/
 ShiftersRampage/Maps/
 ShiftersRampage/Tilsets/
 ShiftersRampage/Spritesheets/
@@ -260,3 +261,6 @@ ShiftersRampage/Tilesets/
 Screens/
 ShiftersRampage/MenuScreen/
 *.rar
+*.psd
+*.png
+*.ttf
